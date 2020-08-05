@@ -1,0 +1,14 @@
+.h6Margin{
+    margin-top:5px;
+}
+
+.container{width:100%}
+
+p.pStatic{
+    font-size: 13px;
+    color:black;
+}
+
+.less{
+    margin:0 !important;
+}
