@@ -1,7 +1,7 @@
 {
   "name": "SGKY",
-  "description" : "Directly read columnists from Gozcu Newsletter",
-  "version": "2020.0.1",
+  "description" : "Directly read columnists of Gozcu Newsletter from Turkey",
+  "version": "2020.0.3",
   "manifest_version": 2,
   "browser_action": {
     "default_popup": "popup.html",

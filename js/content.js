@@ -24,6 +24,7 @@ function sadelestir(){
         1000
     )
 }
+//test
 
 
 //Sending message to popup side
