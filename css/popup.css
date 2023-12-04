@@ -5,6 +5,7 @@
 h3{
     font-size: 16px;
     font-weight: bold;
+    margin-top:50px;
 }
 
 .container{width:100%}
@@ -17,3 +18,23 @@ p.pStatic{
 .less{
     margin:0 !important;
 }
+
+.fixPosition{
+    position:fixed !important;
+}
+
+.activeItem{
+    background-color: lightyellow !important;
+}
+
+.converted-collection-item{
+    margin-bottom:5px !important;
+    margin-top: 5px !important;
+    border:0 !important;
+    border-radius: 3px !important;
+}
+
+.first-item-margin{
+    margin-top: 40px !important;
+}
+
