@@ -10,6 +10,13 @@ let SGKY = {
         date:'',
         text:''
     },
+    modalIngredients: {
+        configModal: {
+            body:`<h4>Config Menu</h4>
+        <p>Sample config text for config</p>`,
+            footer:`<a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>`
+        }
+    },
     init(){
         this.getColumnistsList().then(r=>r);
     },
@@ -46,7 +53,13 @@ let SGKY = {
             default:
                 break;
         }
-        columnistList.innerHTML=`<a class="waves-effect waves-light btn-small" style="position: fixed" id="columnOrderByColumnistName">A-Z</a>`;
+        columnistList.innerHTML=`
+<span style="position: fixed">
+<a class="waves-effect waves-light btn-small" id="columnOrderByColumnistName">A-Z</a>
+<a class="waves-effect waves-light btn-small purple" style="margin-left:5px;" id="configModalOpener" >Ayarlar</a>
+</span>
+`;
+
         payload.columnArray.forEach(({columnLink, newsImg, theColumnistName, dateOfColumn, headerOfColumn})=>{
             columnistList.innerHTML+=`<a href="#!" id="columnId_${columnCounter}" class="collection-item converted-collection-item ${(columnCounter<1)?'first-item-margin':''}" title="Yaziyi okumak icin tiklayin." style="background-repeat: no-repeat; background-position: top right; background-size: 50px; background-attachment: scroll; background-image: url('${newsImg}')"><h6 class="red-text h6Margin">${theColumnistName}</h6><span class="blue-grey-text">${dateOfColumn}</span> <br><span class="black-text">${headerOfColumn}</span></a>`;
             columnCounter++;
@@ -63,6 +76,9 @@ let SGKY = {
         document.querySelector('#columnOrderByColumnistName').addEventListener('click',()=>{
             let orderDirection = payload.orderDirection==='asc' ? 'desc': 'asc';
             this.createColumnistListOnPopup({columnArray: payload.columnArray, orderBy:'columnist', orderDirection:orderDirection});
+        })
+        document.querySelector('#configModalOpener').addEventListener("click", ()=>{
+            this.openConfigModal('configModal');
         })
     },
     async getTheColumn(linkAddress){
@@ -116,6 +132,22 @@ let SGKY = {
         this.utterance.lang = this.speechLanguage;
         this.utterance.rate = this.speechSpeed;
             speechSynthesis.speak(this.utterance);
+    },
+    openConfigModal(whichModal){
+        console.log("modal acici cagrildi: " + whichModal);
+        let modalInstances = document.querySelectorAll('.modal');
+        let instances = M.Modal.init(modalInstances,{dismissible:false});
+        // Open the modal programmatically
+        let myModal = document.getElementById('mainModal');
+        myModal.querySelector('.modal-content').innerHTML=this.modalIngredients[whichModal].body;
+        myModal.querySelector('.modal-footer').innerHTML=this.modalIngredients[whichModal].footer;
+        let modalInstance = M.Modal.getInstance(myModal);
+
+        // Call the open method when you want to open the modal
+        modalInstance.open();
+        },
+    saveConfigs(){
+        console.log('Configs saved!')
     }
 }
 
@@ -124,3 +156,4 @@ let SGKY = {
 window.addEventListener('load',()=>{
     SGKY.init();
 })
+

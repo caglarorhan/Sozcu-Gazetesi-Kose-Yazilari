@@ -1,7 +1,7 @@
 {
   "name": "SGKY",
   "description" : "Directly read columnists of Gozcu Newsletter from Turkey",
-  "version": "2023.0.3git add .",
+  "version": "2023.0.3",
   "manifest_version": 3,
   "permissions": [],
   "icons": {
