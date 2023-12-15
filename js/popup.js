@@ -10,18 +10,12 @@ let SGKY = {
         date:'',
         text:''
     },
-    modalIngredients: {
-        configModal: {
-            body:`<h4>Config Menu</h4>
-        <p>Sample config text for config</p>`,
-            footer:`<a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>`
-        }
-    },
+    columnsData:[],
     init(){
         this.getColumnistsList().then(r=>r);
     },
     async getColumnistsList(){
-        let columnsArray = [];
+        this.columnsData = [];
         let response = await fetch(`https://www.sozcu.com.tr/yazarlar/`);
         let tempHTML = await response.text();
         let dP = new DOMParser();
@@ -35,10 +29,10 @@ let SGKY = {
                 thatColumn.dateOfColumn = columnistCard.querySelector('.text-secondary').textContent;
                 thatColumn.headerOfColumn = columnistCard.querySelector('.author-content-title').textContent;
                 thatColumn.newsImg = columnistCard.querySelector('.author-photo img').src;
-                columnsArray.push(thatColumn);
+                this.columnsData.push(thatColumn);
             }
         })
-        this.createColumnistListOnPopup({columnArray: columnsArray, orderBy:null, orderDirection:null});
+        this.createColumnistListOnPopup({columnArray: this.columnsData, orderBy:null, orderDirection:null});
     },
     createColumnistListOnPopup(payload){
         let columnistList = document.getElementById('columnistList');
@@ -96,8 +90,8 @@ let SGKY = {
         let dP = new DOMParser();
         let doc = dP.parseFromString(tempHTML, "text/html");
         document.querySelector('#columnText').innerHTML=`<span class="fixPosition" id="buttonContainer"></span>`;
-        document.querySelector('#buttonContainer').innerHTML+=`<button class="btn btn-small blue" id="redirectButton" alt="Bu dugme gazetedeki orijinal yazi sayfasini acar.">Yaziya git!</button>`;
-        document.querySelector('#buttonContainer').innerHTML+=`<button class="btn btn-small green" style="margin-left:5px;" id="readButton" alt="Bu dugme kose yazisini okumayi baslatir.">Yaziyi Oku</button>`;
+        document.querySelector('#buttonContainer').innerHTML+=`<button class="btn btn-small blue" id="redirectButton" alt="Bu dugme gazetedeki orijinal yazi sayfasini acar.">YAZIYA GIT!</button>`;
+        document.querySelector('#buttonContainer').innerHTML+=`<button class="btn btn-small green" style="margin-left:5px;" id="readButton" alt="Bu dugme kose yazisini okumayi baslatir.">YAZIYI DINLE</button>`;
         document.querySelector('#buttonContainer').innerHTML+=`<button class="btn btn-small red" style="width:150px; margin-left:5px;"><input id="speechSpeed" name="speedSpeech" type="range" min="0" max="10" step="0.1" value="1" title="1" alt="Bu hiz ayarlayici okuma hizini belirler, okumayi bastan baslatir."></button>`;
 
         let columnLoadArea = doc.querySelector('article')
@@ -136,16 +130,59 @@ let SGKY = {
     openConfigModal(whichModal){
         console.log("modal acici cagrildi: " + whichModal);
         let modalInstances = document.querySelectorAll('.modal');
-        let instances = M.Modal.init(modalInstances,{dismissible:false});
+
+        M.Modal.init(modalInstances,{dismissible:false, onOpenEnd: ()=>{
+            console.log('Modal opened');
+                let tabInstances = document.querySelectorAll('.tabs');
+                let tabInstance = M.Tabs.init(tabInstances,{})
+        }});
+
         // Open the modal programmatically
         let myModal = document.getElementById('mainModal');
-        myModal.querySelector('.modal-content').innerHTML=this.modalIngredients[whichModal].body;
-        myModal.querySelector('.modal-footer').innerHTML=this.modalIngredients[whichModal].footer;
-        let modalInstance = M.Modal.getInstance(myModal);
+        let responseModalData = this.getModalData(whichModal);
 
+        myModal.querySelector('.modal-content').innerHTML=responseModalData.body;
+        myModal.querySelector('.modal-footer').innerHTML=responseModalData.footer;
+        let modalInstance = M.Modal.getInstance(myModal);
         // Call the open method when you want to open the modal
         modalInstance.open();
-        },
+        let selectInstances = document.querySelectorAll('select');
+        let selectInstance = M.FormSelect.init(selectInstances, {});
+    },
+    getModalData(whichModal){
+        let data = {body:'TEST MODAL BODY', footer:'TEST MODAL FOOTER'};
+        switch(whichModal){
+            case 'configModal':
+                let options = '';
+                this.columnsData.forEach(columnist=>{options+=`<option value="${columnist.theColumnistName}">${columnist.theColumnistName}</option>`})
+
+                data.body = `        
+                                  <div class="row">
+                                    <div class="col s12">
+                                      <ul class="tabs">
+                                        <li class="tab col s4"><a href="#favs" class="active">Favorilerim</a></li>
+                                        <li class="tab col s4"><a href="#reading">Okuma Sesi</a></li>
+                                        <li class="tab col s4"><a href="#other">Diger</a></li>
+                                      </ul>
+                                    </div>
+                                    <div id="favs" class="col s12">
+                                   Yazar sec: <select id="columnistList" class="multiple select-modified">${options}</select>
+                                    </div>
+                                    <div id="reading" class="col s12">Test 2</div>
+                                    <div id="other" class="col s12">Test 3</div>
+                                  </div>
+                                `;
+                data.footer=`<a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>`;
+                break;
+            case 'sourceSelectModal':
+                break
+            default:
+
+        }
+
+console.log(data)
+        return data;
+    },
     saveConfigs(){
         console.log('Configs saved!')
     }
