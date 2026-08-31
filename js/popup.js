@@ -11,6 +11,7 @@ let SGKY = {
         text:''
     },
     columnsData:[],
+    articleRequestController: null,
     init(){
         this.getColumnistsList().then(r=>r);
     },
@@ -47,7 +48,7 @@ let SGKY = {
             default:
                 break;
         }
-        columnistList.innerHTML=`
+        let columnistListMarkup = `
 <span style="position: fixed">
 <a class="waves-effect waves-light btn-small" id="columnOrderByColumnistName">A-Z</a>
 <a class="waves-effect waves-light btn-small purple" style="margin-left:5px;" id="configModalOpener" >Ayarlar</a>
@@ -55,9 +56,10 @@ let SGKY = {
 `;
 
         payload.columnArray.forEach(({columnLink, newsImg, theColumnistName, dateOfColumn, headerOfColumn})=>{
-            columnistList.innerHTML+=`<a href="#!" id="columnId_${columnCounter}" class="collection-item converted-collection-item ${(columnCounter<1)?'first-item-margin':''}" title="Yaziyi okumak icin tiklayin." style="background-repeat: no-repeat; background-position: top right; background-size: 50px; background-attachment: scroll; background-image: url('${newsImg}')"><h6 class="red-text h6Margin">${theColumnistName}</h6><span class="blue-grey-text">${dateOfColumn}</span> <br><span class="black-text">${headerOfColumn}</span></a>`;
+            columnistListMarkup += `<a href="#!" id="columnId_${columnCounter}" class="collection-item converted-collection-item ${(columnCounter<1)?'first-item-margin':''}" title="Yaziyi okumak icin tiklayin." style="background-repeat: no-repeat; background-position: top right; background-size: 50px; background-attachment: scroll; background-image: url('${newsImg}')"><h6 class="red-text h6Margin">${theColumnistName}</h6><span class="blue-grey-text">${dateOfColumn}</span> <br><span class="black-text">${headerOfColumn}</span></a>`;
             columnCounter++;
-        })
+        });
+        columnistList.innerHTML = columnistListMarkup;
 
         payload.columnArray.forEach((columnItem,i)=>{
             document.querySelector(`#columnId_${i}`).addEventListener('click',()=>{
@@ -77,35 +79,45 @@ let SGKY = {
     },
     async getTheColumn(linkAddress){
         if(speechSynthesis.speaking) speechSynthesis.cancel();
+        if (this.articleRequestController) this.articleRequestController.abort();
+        this.articleRequestController = new AbortController();
+        let requestController = this.articleRequestController;
         Object.keys(this.currentColumn).forEach(oKey=>{this.currentColumn[oKey] = ''});
         let preloader = `<div class="progress center-align">
                                         <div class="indeterminate"></div>
                                 </div>`;
         document.querySelector('#columnText').innerHTML='';
         document.querySelector('#columnText').innerHTML=preloader;
-        let response = await fetch(`${linkAddress}`);
+        let response;
+        try {
+            response = await fetch(linkAddress, {signal: requestController.signal});
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                document.querySelector('#columnText').textContent = 'Yazi yuklenemedi.';
+            }
+            return;
+        }
+        if (requestController !== this.articleRequestController) return;
         if (response.status !== 200) {return}
         let tempHTML = await response.text();
+        if (requestController !== this.articleRequestController) return;
 
         let dP = new DOMParser();
         let doc = dP.parseFromString(tempHTML, "text/html");
-        document.querySelector('#columnText').innerHTML=`<span class="fixPosition" id="buttonContainer"></span>`;
-        document.querySelector('#buttonContainer').innerHTML+=`<button class="btn btn-small blue" id="redirectButton" alt="Bu dugme gazetedeki orijinal yazi sayfasini acar.">YAZIYA GIT!</button>`;
-        document.querySelector('#buttonContainer').innerHTML+=`<button class="btn btn-small green" style="margin-left:5px;" id="readButton" alt="Bu dugme kose yazisini okumayi baslatir.">YAZIYI DINLE</button>`;
-        document.querySelector('#buttonContainer').innerHTML+=`<button class="btn btn-small red" style="width:150px; margin-left:5px;"><input id="speechSpeed" name="speedSpeech" type="range" min="0" max="10" step="0.1" value="1" title="1" alt="Bu hiz ayarlayici okuma hizini belirler, okumayi bastan baslatir."></button>`;
-
         let columnLoadArea = doc.querySelector('article')
         let theColumn = columnLoadArea.querySelectorAll('.article-body>p');
         this.currentColumn.title = columnLoadArea.querySelector('h1.author-content-title').textContent;
         this.currentColumn.columnistName = columnLoadArea.querySelector('.content-meta-name').textContent;
         this.currentColumn.date = columnLoadArea.querySelector('time').textContent;
 
-        document.querySelector('#columnText').innerHTML+=`<h4>${this.currentColumn.columnistName}, tarih:${this.currentColumn.date}</h4>`
-        document.querySelector('#columnText').innerHTML+=`<h3>${this.currentColumn.title}</h3>`
+        let columnMarkup = `<span class="fixPosition" id="buttonContainer"><button class="btn btn-small blue" id="redirectButton" alt="Bu dugme gazetedeki orijinal yazi sayfasini acar.">YAZIYA GIT!</button><button class="btn btn-small green" style="margin-left:5px;" id="readButton" alt="Bu dugme kose yazisini okumayi baslatir.">YAZIYI DINLE</button><button class="btn btn-small red" style="width:150px; margin-left:5px;"><input id="speechSpeed" name="speedSpeech" type="range" min="0" max="10" step="0.1" value="1" title="1" alt="Bu hiz ayarlayici okuma hizini belirler, okumayi bastan baslatir."></button></span>`;
+        columnMarkup += `<h4>${this.currentColumn.columnistName}, tarih:${this.currentColumn.date}</h4>`;
+        columnMarkup += `<h3>${this.currentColumn.title}</h3>`;
         theColumn.forEach(oP=>{
-            document.querySelector('#columnText').innerHTML+=`<p class="pStatic">${oP.textContent}</p>`;
+            columnMarkup += `<p class="pStatic">${oP.textContent}</p>`;
             this.currentColumn.text+=oP.textContent;
-        })
+        });
+        document.querySelector('#columnText').innerHTML = columnMarkup;
         document.querySelector('#redirectButton').addEventListener('click',(address)=>{
             chrome.tabs.update({url: linkAddress});
         })

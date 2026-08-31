@@ -13,7 +13,21 @@ h4{
     font-weight: bold;
     margin-top: 50px;
 }
-.container{width:100%}
+html,
+body {
+    width: 700px;
+    height: 580px;
+    margin: 0;
+    overflow: hidden;
+}
+
+.container {
+    box-sizing: border-box;
+    width: 700px;
+    height: 580px;
+    margin: 0;
+    padding: 2px;
+}
 
 p.pStatic{
     font-size: 13px;
@@ -22,6 +36,15 @@ p.pStatic{
 
 .less{
     margin:0 !important;
+}
+
+#columnistList,
+#columnText {
+    box-sizing: border-box;
+    height: 550px;
+    max-height: 550px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .fixPosition{
