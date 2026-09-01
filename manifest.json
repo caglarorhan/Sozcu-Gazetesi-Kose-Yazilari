@@ -1,26 +1,38 @@
 {
   "name": "SGKY",
   "description" : "Read the latest columns from Sozcu Gazetesi.",
-  "version": "2026.0.1",
+  "version": "2026.0.2",
   "manifest_version": 3,
-  "permissions": [],
+  "permissions": [
+    "offscreen",
+    "sidePanel"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
   "host_permissions": [
     "https://www.sozcu.com.tr/*"
   ],
   "icons": {
-    "16": "./img/sgky_16.png",
-    "32": "./img/sgky_32.png",
-    "64": "./img/sgky_64.png",
-    "128": "./img/sgky_128.png"
+    "16": "img/sgky_16.png",
+    "32": "img/sgky_32.png",
+    "64": "img/sgky_64.png",
+    "128": "img/sgky_128.png"
   },
   "action": {
-    "default_popup": "popup.html",
     "default_icon": {
-      "16": "./img/sgky_16.png",
-      "32": "./img/sgky_32.png",
-      "64": "./img/sgky_64.png",
-      "128": "./img/sgky_128.png"
+      "16": "img/sgky_16.png",
+      "32": "img/sgky_32.png",
+      "64": "img/sgky_64.png",
+      "128": "img/sgky_128.png"
     }
+  },
+  "side_panel": {
+    "default_path": "dist/popup.html"
+  },
+  "background": {
+    "service_worker": "dist/js/background.js",
+    "type": "module"
   },
   "content_scripts": [
     {
@@ -28,7 +40,7 @@
         "https://*.sozcu.com.tr/*",
         "https://www.sozcu.com.tr/kategori/yazarlar/"
       ],
-      "js": ["./js/content.js"],
+      "js": ["js/content.js"],
       "all_frames": true,
       "match_about_blank": true
     }

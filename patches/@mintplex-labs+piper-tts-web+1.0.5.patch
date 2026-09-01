@@ -1,0 +1,44 @@
+diff --git a/node_modules/@mintplex-labs/piper-tts-web/dist/piper-tts-web.js b/node_modules/@mintplex-labs/piper-tts-web/dist/piper-tts-web.js
+index 250fa01..13f03f6 100644
+--- a/node_modules/@mintplex-labs/piper-tts-web/dist/piper-tts-web.js
++++ b/node_modules/@mintplex-labs/piper-tts-web/dist/piper-tts-web.js
+@@ -10,9 +10,9 @@ var __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot
+ var __privateSet = (obj, member, value, setter) => (__accessCheck(obj, member, "write to private field"), setter ? setter.call(obj, value) : member.set(obj, value), value);
+ var __privateMethod = (obj, member, method) => (__accessCheck(obj, member, "access private method"), method);
+ var _createPiperPhonemize, _modelConfig, _ort, _ortSession, _progressCallback, _wasmPaths, _logger, _TtsSession_instances, predictChunk_fn;
+-const HF_BASE = "https://huggingface.co/diffusionstudio/piper-voices/resolve/main";
+-const ONNX_BASE = "https://cdnjs.cloudflare.com/ajax/libs/onnxruntime-web/1.18.0/";
+-const WASM_BASE = "https://cdn.jsdelivr.net/npm/@diffusionstudio/piper-wasm@1.0.0/build/piper_phonemize";
++const HF_BASE = "./assets/piper-voice";
++const ONNX_BASE = "./assets/";
++const WASM_BASE = "./assets/piper-phonemize";
+ const PATH_MAP = {
+   "ar_JO-kareem-low": "ar/ar_JO/kareem/low/ar_JO-kareem-low.onnx",
+   "ar_JO-kareem-medium": "ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx",
+@@ -141,7 +141,7 @@ const PATH_MAP = {
+   "it_IT-paola-medium": "it/it_IT/paola/medium/it_IT-paola-medium.onnx"
+ };
+ async function writeBlob(url, blob) {
+-  if (!url.match("https://huggingface.co")) return;
++  if (url.startsWith("./assets/")) return;
+   try {
+     const root = await navigator.storage.getDirectory();
+     const dir = await root.getDirectoryHandle("piper", {
+@@ -168,7 +168,7 @@ async function removeBlob(url) {
+   }
+ }
+ async function readBlob(url) {
+-  if (!url.match("https://huggingface.co")) return;
++  if (url.startsWith("./assets/")) return;
+   try {
+     const root = await navigator.storage.getDirectory();
+     const dir = await root.getDirectoryHandle("piper", {
+@@ -293,7 +293,7 @@ const _TtsSession = class _TtsSession {
+     if (ort.env) {
+       if ("allowLocalModels" in ort.env) ort.env.allowLocalModels = false;
+       if (ort.env.wasm) {
+-        ort.env.wasm.numThreads = navigator.hardwareConcurrency;
++        ort.env.wasm.numThreads = 1;
+         ort.env.wasm.wasmPaths = __privateGet(this, _wasmPaths).onnxWasm;
+       }
+     }

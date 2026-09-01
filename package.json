@@ -1,0 +1,30 @@
+{
+  "name": "sozcu-gazetesi-kose-yazilari",
+  "version": "1.0.0",
+  "description": "A Chrome extension for reading the latest Sozcu Gazetesi columns.",
+  "scripts": {
+    "build": "vite build && node scripts/copy-extension-files.mjs",
+    "postinstall": "patch-package"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caglarorhan/Sozcu-Gazetesi-Kose-Yazilari.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/caglarorhan/Sozcu-Gazetesi-Kose-Yazilari/issues"
+  },
+  "homepage": "https://github.com/caglarorhan/Sozcu-Gazetesi-Kose-Yazilari#readme",
+  "devDependencies": {
+    "@diffusionstudio/piper-wasm": "^1.0.0",
+    "@mintplex-labs/piper-tts-web": "^1.0.5",
+    "patch-package": "^8.0.1",
+    "vite": "^8.2.2"
+  },
+  "dependencies": {
+    "onnxruntime-web": "1.18.0"
+  }
+}

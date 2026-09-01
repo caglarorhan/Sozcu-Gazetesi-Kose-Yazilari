@@ -12,6 +12,16 @@
 </head>
 <body>
 <div class="container">
+    <div class="speech-overlay" id="speechOverlay" hidden>
+        <div class="speech-overlay-dialog" role="status" aria-live="polite">
+            <strong id="speechOverlayMessage">Turkce ses hazirlaniyor</strong>
+            <span id="speechOverlayProgress">0%</span>
+        </div>
+    </div>
+    <div class="chunk-indicator" id="chunkIndicator" role="status" aria-live="polite" hidden>
+        <span class="chunk-indicator-spinner"></span>
+        <span id="chunkIndicatorText">Sonraki ses bolumu hazirlaniyor</span>
+    </div>
     <div class="row less">
 
         <div class="col s5 collection scrolling" id="columnistList">
@@ -25,8 +35,10 @@
 
         </div>
     </div>
-    <span>Icons from <a href="https://www.flaticon.com/authors/catkuro" target="_blank">catkuro</a></span>
-    <span style="margin-left:30px"><a href="https://uyelik.sozcu.com.tr/kayitpromo" style="position: fixed" target="_blank">Lutfen Sözcü Gazetesini desteklemek icin abone olun!</a></span>
+    <footer class="popup-footer">
+        <span>Icons from <a href="https://www.flaticon.com/authors/catkuro" target="_blank">catkuro</a></span>
+        <a href="https://uyelik.sozcu.com.tr/kayitpromo" target="_blank">Lutfen Sözcü Gazetesini desteklemek icin abone olun!</a>
+    </footer>
 </div>
 <!-- Modal Structure -->
 <div id="mainModal" class="modal modal-modified">
@@ -39,6 +51,6 @@
     </div>
 </div>
 <script src="js/materialize.min.js" ></script>
-<script src="js/popup.js"></script>
+<script type="module" src="js/popup.js"></script>
 </body>
 </html>
