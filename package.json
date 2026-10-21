@@ -22,7 +22,7 @@
     "@diffusionstudio/piper-wasm": "^1.0.0",
     "@mintplex-labs/piper-tts-web": "^1.0.5",
     "patch-package": "^8.0.1",
-    "vite": "^8.2.2"
+    "vite": "^8.2.4"
   },
   "dependencies": {
     "onnxruntime-web": "1.18.0"
